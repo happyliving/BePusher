@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture Photo</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+
+
+
+    
+    <script type="text/javascript" src="scripts/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/animsition.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+
+    <script type="text/javascript" charset="utf-8">
+        
+
+  
+
+
+        $(document).ready(function () {
+            $('.animsition').animsition({
+                inClass: 'zoom-in-sm',
+                outClass: 'zoom-out-sm'
+            })
+           
+                
+        });
+
+
+    </script>
+
+    <style>
+        .container-fluid {
+            min-height: 100%;
+            height: 100%;
+        }
+
+        span {
+            font-weight: bold;
+            font-size: 30px;
+            font-family: 微軟正黑體;
+        }
+
+        img {
+            opacity: 0.5;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+        }
+
+        img:hover {
+            opacity: 1.0;
+            filter: alpha(opacity=100); /* For IE8 and earlier */
+        }
+    </style>
+
+</head>
+
+<body class ="animsition">
+    <div class="container">
+        <ul class="pager">
+            <li class="previous"><a href="step1.html">Previous</a></li>
+        </ul>
+        <div class="container">
+            <div class="jumbotron text-center">
+                <h1>Step 2 : 選擇您的平面圖</h1>
+            </div>
+
+            <span style="color:cornflowerblue">您可以選擇預設的</span><br>
+            <a href="step3.html">
+                <img src="images/Rect.png" style="border-radius:10px;margin-left:20px;margin-top:10px;width:40%;">
+            </a>
+            <a href="step3.html">
+                <img src="images/Circle.png" style="display:none;border-radius:10px;margin-left:20px;margin-top:10px;width:40%;">
+            </a>
+
+            <br>
+            <br>
+            <span style="color:cornflowerblue">或載入自己的平面圖</span><br>
+            <a href="step3.html">
+                <img src="images/choose.png" style="border-radius:10px;margin-left:20px;margin-top:10px;width:40%;">
+            </a>
+            
+        </div>
+     </div>
+</body>
+</html>

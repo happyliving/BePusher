@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>step4</title>
+
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+
+
+
+    <script type="text/javascript" charset="utf-8" src="scripts/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/animsition.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="scripts/beacon.js"></script>
+    <style>
+        h6 {
+            float: left
+        }
+
+        input {
+            float: left;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        strong {
+            color: red;
+        }
+
+      
+      
+    </style>
+
+
+
+    <script>
+        var beaconArray;
+        beaconArray = [];
+        $(document).ready(function () {
+            $('.animsition').animsition({
+                inClass: 'zoom-in-sm',
+                outClass: 'zoom-out-sm'
+            })
+
+            
+            var storage = window.localStorage;
+            var scene;
+           
+          
+            /*if (storage.getItem("beaconArray") != undefined)
+                beaconArray = JSN.parse(storage.getItem('beaconArray'));
+            else*/
+              
+          
+            console.log(beaconArray);
+
+           
+       
+
+            $("#next").click(function () {
+                var storage = window.localStorage;
+                storage.setItem('beaconArray', JSON.stringify(beaconArray));
+                stopRange();
+                window.location.href = "step5.html";
+            });
+
+            $(".previous").click(function () {
+                stopRange();
+                window.location.href = "step3.html";
+            });
+
+            var storage = window.localStorage;
+            var length = storage.getItem('length');
+            var width = storage.getItem('width');
+            var height = storage.getItem('height');
+           
+            
+            addTouchEvent();
+        });
+
+
+       
+
+
+        function addTouchEvent() {
+
+            $.extend($.support, { touch: "ontouchend" in document });
+            document.getElementById("question").addEventListener("touchstart", (function () {
+                document.getElementById("hint").style.display = "block";
+
+            }));
+
+            document.getElementById("question").addEventListener("touchend", (function () {
+                this.style.display = "block";
+                document.getElementById("hint").style.display = "none";
+
+
+            }));
+        }
+
+
+
+
+          /* var storage = window.localStorage;
+           var length = storage.getItem('length');
+           var width = storage.getItem('width');
+           var height = storage.getItem('height');
+           new showScene(length,width,height);*/
+    </script>
+</head>
+
+<body class="animsition">
+    <div class="container fill">
+        <ul class="pager">
+            <li class="previous"><a href="step3.html">Previous</a></li>
+        </ul>
+
+        <div class="jumbotron text-center">
+            <h1>Step 4 : 設置你的beacon點</h1>
+        </div>
+
+
+
+
+        <div id="showBeacon" style="margin-top:30px;" overflow="scroll">
+         </div>
+           
+                <span id="question" class="glyphicon glyphicon-question-sign" style="float:left"></span>
+                <div id="hint" style="width:50%;padding:10px;background-color:snow;opacity:0.5;display:none;float:left">
+                    這裡點選想設定的beacon，填入相對座標。
+                    xyz對應的是展場的長高寬
+                    請以beacon相對於展場之座標輸入
+                </div>
+                
+            
+            <button type="button" id="next" style="float:right;" class="btn btn-success">下一頁</button>
+        </div>
+       
+
+
+</body>
+</html>

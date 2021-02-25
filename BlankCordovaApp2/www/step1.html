@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>step1</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+
+
+    <script type="text/javascript" charset="utf-8" src="scripts/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/animsition.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/jquery.Jcrop.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        var outside_c;
+        var uri;
+        var jcrop_api;
+        var base64;
+        var file_data;
+        var form_data;
+        //var url = "http://140.121.197.130";
+        var url = "https://bepusher.000webhostapp.com";
+
+
+        function cutdown() {
+            jQuery(function ($) {
+
+                $('#largeImage').Jcrop({
+                    allowResize: false,
+                    allowMove: true,
+                    onChange: change,
+                    setSelect: [0, 0, 280, 275],
+                }, function () {
+
+                    jcrop_api = this;
+                    allowResize = false;
+                });
+
+            });
+
+
+
+
+
+
+        }
+
+        function change(c) {
+            outside_c = c;
+        }
+
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        //Cordova加载完成会触发
+        function onDeviceReady() {
+
+        }
+
+
+
+
+
+
+
+
+        function next() {
+
+
+            var name = document.getElementById("name").value;
+            var intro = document.getElementById("intro").value;
+            var file = document.getElementById("mapImage").value;
+
+            if (name == "") {
+                alert("展場名稱不得為空!");
+                return;
+            }
+
+            if (file == "") {
+                alert("展場瀏覽圖不得為空!");
+                return;
+            }
+
+
+
+            var storage = window.localStorage;
+
+            form_data.set("exhibition_name",name)
+            form_data.set("exhibition_intro", intro)
+
+            form_data.set("x1", outside_c.x);
+            form_data.set("x2", outside_c.x2);
+            form_data.set("y1", outside_c.y);
+            form_data.set("y2", outside_c.y2);
+            //var urlTest = "https://www.ntou.edu.tw/bin/home.php";
+
+            $.ajax({
+                url: url + "/exhibition_server/exhibition/add_exhibition.php",
+                type: 'post',
+                data: form_data,
+                processData: false,
+                contentType: false,
+                success: function (data)
+                {
+                    document.location.href = "step2.html";
+                    //console.log(data);
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    alert(textStatus + ': ' + errorThrown)
+                    alert(urlTest); }
+            });
+
+
+
+        }
+
+
+
+        $(document).ready(function () {
+            $('.animsition').animsition({
+                inClass: 'zoom-in-sm',
+                outClass: 'zoom-out-sm'
+            });
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var largeImage = document.getElementById('largeImage');
+                largeImage.innerHTML = "";
+
+                largeImage.src = e.target.result;
+                largeImage.style.display = "block";
+                largeImage.style.visibility = "visible";
+
+                if ($('#largeImage').data('Jcrop')) {
+                    $('#largeImage').data('Jcrop').destroy();
+                }
+
+                cutdown();
+            }
+
+
+            $('#mapImage').change(function () {
+                form_data = new FormData(document.getElementById("exhibition_data"));
+                reader.readAsDataURL(this.files[0]);
+                // read the image file as a data URL.
+
+
+            });
+
+            addTouchEvent();
+        });
+
+        function addTouchEvent() {
+
+            $.extend($.support, { touch: "ontouchend" in document });
+            document.getElementById("question").addEventListener("touchstart", (function () {
+                document.getElementById("hint").style.display = "block";
+
+            }));
+
+            document.getElementById("question").addEventListener("touchend", (function () {
+                this.style.display = "block";
+                document.getElementById("hint").style.display = "none";
+
+
+            }));
+        }
+
+
+
+
+    </script>
+
+    <style>
+        .container-fluid {
+            min-height: 100%;
+            height: 100%;
+        }
+
+        span {
+            font-weight: bold;
+            font-size: 30px;
+            font-family: 微軟正黑體;
+        }
+
+
+
+    </style>
+
+</head>
+
+
+
+<body class="animsition" >
+    <div class="container">
+        <ul class="pager">
+            <li class="previous"><a href="index.html">Previous</a></li>
+        </ul>
+        <div class="container-fluid">
+            <div class="jumbotron text-center">
+                <h1>Step 1 : 設定展場名及瀏覽圖</h1>
+            </div>
+            <span style="color:cornflowerblue">展場名稱 : </span><input type="text" id="name" required="required" /><br />
+            <span style="color:cornflowerblue">展場簡介 : </span><textarea id="intro" name="Text1" cols="40" rows="5"></textarea>
+                <br>
+                <!--<button onclick="getPhoto(pictureSource.PHOTOLIBRARY);"type="button" id="next" class="btn btn-default" style="margin-top:30px;float:left;">上傳展場圖片</button>-->
+                <form id="exhibition_data">
+                 <input type="file" id="mapImage" name="mapImage" required />
+                </form>
+            
+           
+               
+                <br>
+                
+                <div style="margin-top:30px;max-width:300px;max-height:400px"><img style="max-width:300px;max-height:400px" id="largeImage" src=""  /></div>
+              
+              <div>
+                  <span id ="question" class="glyphicon glyphicon-question-sign" style="margin-top:30px;float:left"></span>
+                  <div id="hint" style="width:50%;padding:10px;background-color:snow;opacity:0.5;display:none;float:left">
+                      請在這裡輸入展場名稱或是該展場的主題，簡介，以及可以做為。
+                  </div>
+                  <input type="button" onclick="next();" class=" btn btn-success" style="margin-top:30px;float:right" value="下一頁">
+              </div>
+               
+        </div>
+
+       
+
+      
+    </div>
+</body>
+</html>
+

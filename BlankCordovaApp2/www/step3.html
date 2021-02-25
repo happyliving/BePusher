@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>step3</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+    <script type="text/javascript" charset="utf-8" src="scripts/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/animsition.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+
+        document.addEventListener("deviceready", onDeviceReady, false);
+        var s;
+
+
+        //Cordova加载完成会触发
+        function onDeviceReady() {
+
+        }
+
+
+        function next() {
+            var length = document.getElementById('length').value;
+            var width = document.getElementById('width').value ;
+            var height = document.getElementById('height').value;
+            if (length == "") {
+                alert("長不得為空!");
+                return;
+            }
+
+            if (width == "") {
+                alert("寬不得為空!");
+                return;
+            }
+
+
+            if (height == "") {
+                alert("高不得為空!");
+                return;
+            }
+
+
+
+            var storage = window.localStorage;
+         
+            
+
+            storage.setItem('length', length);
+            storage.setItem('width', width);
+            storage.setItem('height', height);
+           
+            
+            document.location.href = "step4.html";
+
+        }
+
+
+        $(document).ready(function () {
+            $('.animsition').animsition({
+                inClass: 'zoom-in-sm',
+                outClass: 'zoom-out-sm'
+            })
+            addTouchEvent()
+        });
+
+
+        function addTouchEvent() {
+
+            $.extend($.support, { touch: "ontouchend" in document });
+            document.getElementById("question").addEventListener("touchstart", (function () {
+                document.getElementById("hint").style.display = "block";
+
+            }));
+
+            document.getElementById("question").addEventListener("touchend", (function () {
+                this.style.display = "block";
+                document.getElementById("hint").style.display = "none";
+
+
+            }));
+        }
+
+
+
+
+    </script>
+
+    <style>
+        .container-fluid {
+            min-height: 100%;
+            height: 100%;
+        }
+
+        span {
+            font-weight: bold;
+            font-size: 30px;
+            font-family: 微軟正黑體;
+        }
+
+        img {
+            opacity: 0.5;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+        }
+
+        img:hover {
+           opacity: 1.0;
+           filter: alpha(opacity=100); /* For IE8 and earlier */
+        }
+    </style>
+
+</head>
+
+<body class="animsition">
+    <div class="container">
+        <ul class="pager">
+            <li class="previous"><a href="step2.html">Previous</a></li>
+        </ul>
+        <div class="container-fluid">
+            <div class="jumbotron text-center">
+                <h1>Step 3 : 設計尺寸</h1>
+            </div>
+
+
+            <div class="form-group">
+                <label>長(m):</label>
+                <input type="text" class="form-control" id="length">
+            </div>
+            <div class="form-group">
+                <label>寬(m):</label>
+                <input type="text" class="form-control" id="width">
+            </div>
+            <div class="form-group">
+                <label>高(m):</label>
+                <input type="text" class="form-control" id="height">
+            </div>
+
+            <div>
+                <span id="question" class="glyphicon glyphicon-question-sign" style="margin-top:30px;float:left"></span>
+                <div id="hint" style="width:50%;padding:10px;background-color:snow;opacity:0.5;display:none;float:left">
+                    這裡請輸入展場的尺寸，可以填寫小數點，展場大小與熱點分析功能有關，請如實輸入。
+                </div>
+                <button onclick="next();" type="button" id="next" class="btn btn-success" style="margin-top:30px;float:right">下一頁</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

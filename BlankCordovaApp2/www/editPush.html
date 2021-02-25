@@ -1,0 +1,393 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>修改</title>
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
+
+    <script type="text/javascript" charset="utf-8" src="scripts/jquery-2.2.4.min.js"></script>
+    <script src="scripts/toastr.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/animsition.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="scripts/pushInfo.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+
+
+
+    <style>
+        body {
+            font-family: "微軟正黑體";
+        }
+
+        input, textarea {
+            margin: 10px 10px 0px 10px;
+        }
+
+        img {
+            margin-top: 10px;
+        }
+
+        strong {
+            color: red;
+        }
+
+        .fill {
+            min-height: 100%;
+            height: 100%;
+        }
+
+        th, td {
+            width: 10px;
+            margin: auto;
+            text-align: left;
+        }
+
+        table {
+            float: left;
+        }
+    </style>
+
+    <script>
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": false,
+            "positionClass": "toast-top-full-width",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        var storage = window.localStorage;
+        var length = storage.getItem('length');
+        var width = storage.getItem('width');
+        var height = storage.getItem('height');
+        var pushArray = [];
+        var count = 0;
+        //var urll = "http://140.121.197.130";
+        var urll = "https://bepusher.000webhostapp.com";
+        var img = [];
+        var titleArray = [];
+        var imageNum = 1;
+        var id;
+        var delTemp;
+
+        function delListener() {
+            $("#deleteBtn").click(function () {
+                for (i = 0; i < titleArray.length; i++) {
+                    if (titleArray[i] == $(this).closest('sr-only').prevObject.context.previousSibling.id) {
+                        titleArray.splice(i, 1);
+                        break;
+                    }
+                }
+                delTemp = $(this).closest('sr-only').prevObject.context.previousSibling.id;
+                console.log(delTemp);
+                console.log(id);
+                $.ajax({
+                    url: urll + "/exhibition_server/broadcast/remove_broadcast.php",
+                    method: "POST",
+                    datatype: 'JSON',
+                    async: false,
+                    cache: false,
+                    data: {
+                        title: delTemp,
+                        id: id,
+                    },
+                    //processData: false,
+                    //contentType: false,
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function () {
+                        Command: toastr["error"]("connection error");
+                    }
+                });
+                $(this).closest('.panel-default').remove();
+            });
+        }
+
+        $(document).ready(function () {
+            $('.animsition').animsition({
+                inClass: 'zoom-in-sm',
+                outClass: 'zoom-out-sm'
+            })
+
+            id = localStorage.getItem("exhibition_id");
+
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: urll + "/exhibition_server/broadcast/search_broadcast.php",
+                async: false,
+                data: {
+                    id: id,
+                }
+                ,
+                error: function (e) {
+                    console.log(e);
+                },
+                success: function (temp) {
+                    var tmp = [];
+                    var data = JSON.parse(temp);
+                    for (var i in data) {
+                        tmp[0] = 'data:image/' + data[i].type1 + ';base64,' + data[i].broadcastImage1 + '';
+                        tmp[1] = 'data:image/' + data[i].type2 + ';base64,' + data[i].broadcastImage2 + '';
+                        tmp[2] = 'data:image/' + data[i].type3 + ';base64,' + data[i].broadcastImage3 + '';
+                        addPush(data[i].title, tmp, data[i].x, data[i].y, data[i].z, data[i].vendorId, data[i].title, data[i].info, data[i].url, data[i].fb_url, data[i].twitter_url);
+
+                        //console.log(count, data[i].img1, data[i].img2, data[i].img3, data[i].x, data[i].y, data[i].z, data[i].info, data[i].vendorId, data[i].title, data[i].url, data[i].fb_url, data[i].twitter_url);
+                        count++;
+                    }
+
+
+
+                }
+            })
+
+            $('#file').change(function () {
+
+
+                for (i = 1; i <= 3; i++)
+                    $('#largeImage' + i).attr('src', "");
+
+                if (this.files.length > 3) {
+                    Command: toastr["warning"]("3 Image at most!");
+                    $('#file').val("");
+                    return;
+                }
+
+                if (this.files && this.files[0]) {
+                    reader = [];
+                    reader[0] = new FileReader();
+                    reader[1] = new FileReader();
+                    reader[2] = new FileReader();
+                    for (i = 0; i < this.files.length; i++) {
+                        reader[i].onload = function (e) {
+                            $('#largeImage' + imageNum).attr('src', e.target.result);
+                            imageNum++;
+                        }
+                    }
+
+                    for (i = 0; i < this.files.length; i++)
+                        reader[i].readAsDataURL(this.files[i]);
+                    // read the image file as a data URL.
+                }
+            });
+
+            $("#add").click(function () {
+                for (i = 1; i <= 3; i++) {
+                    img[i - 1] = $('#largeImage' + i + "").attr('src');
+                    if (img[i - 1] == "")
+                        img[i - 1] = "images/fake" + i + ".png";
+
+                }
+
+
+
+                for (i = 0; i < titleArray.length; i++) {
+                    if (titleArray[i] == $("#title").val()) {
+                        Command: toastr["warning"]("Title can't not be the same!");
+                        return
+                    }
+                }
+
+                var x = $("#x").val();
+                var y = $("#y").val();
+                var z = $("#z").val();
+                var vendorId = $("#vendorId").val();
+                var title = $("#title").val();
+                var info = $("#info").val();
+                var url = $("#url").val();
+                var fb_url = $("#fb_url").val();
+                var twitter_url = $("#twitter_url").val();
+                if (x == "" || y == "" || z == "" || vendorId == "" || title == "" || info == "") {
+                    Command: toastr["error"]("欄位不得為空");
+                    return;
+                }
+
+                titleArray.push($("#title").val());
+
+
+                var form_data = new FormData();
+                jQuery.each(jQuery('#file')[0].files, function (i, file) {
+                    form_data.append('file-' + i, file);
+                    console.log(file);
+                });
+                form_data.set("id", id);
+                form_data.set("title", title);
+                form_data.set("info", info);
+                form_data.set("vendorId", vendorId);
+                form_data.set("url", url);
+                form_data.set("fb_url", fb_url);
+                form_data.set("twitter_url", twitter_url);
+                form_data.set("x", x);
+
+                form_data.set("y", y);
+                form_data.set("z", z);
+                form_data.set("imageSize", imageNum - 1);
+                imageNum = 1;
+
+                $.ajax({
+                    url: urll + "/exhibition_server/broadcast/add_broadcast.php",
+                    //url: "http://192.168.43.178:80/exhibition_server/add.php",
+                    method: "POST",
+                    datatype: 'JSON',
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function () {
+                        alert("error");
+                    }
+                });
+
+
+                //pushArray.push(new pushInfo(title, info, vendorId, url, fb_url, twitter_url, x, y, z));
+                $("input").val("");
+                $("#info").val("");
+                $('#largeImage1').attr('src', "");
+                $('#largeImage2').attr('src', "");
+                $('#largeImage3').attr('src', "");
+                console.log($('#largeImage1'));
+                addPush(title, img, x, y, z, vendorId, title, info, url, fb_url, twitter_url);
+
+            });
+
+
+            $("#next").click(function () {
+                window.location.href = "index.html";
+            });
+            addTouchEvent();
+
+        });
+
+        function addTouchEvent() {
+
+            $.extend($.support, { touch: "ontouchend" in document });
+            document.getElementById("question").addEventListener("touchstart", (function () {
+                document.getElementById("hint").style.display = "block";
+
+            }));
+
+            document.getElementById("question").addEventListener("touchend", (function () {
+                this.style.display = "block";
+                document.getElementById("hint").style.display = "none";
+
+
+            }));
+        }
+
+        function addPush(title, img, x, y, z, vendorId, title, info, url, fb_url, twitter_url) {
+            count++;
+
+            $("#broadcastList").prepend(
+                "<div class='panel panel-default'>" +
+                "<div class='panel-heading'>" +
+                "<h4 class='panel-title'>" +
+                "<a data-toggle='collapse' data-parent='#broadcastList' href='#broadcast" + count + "'>" + title + "</a>" +
+                "<span id='" + title + "' class='sr-only'></span>" +
+                "<button id='deleteBtn' class='btn btn-danger' style='float:right;margin-top:-8px'>刪除</button>" +
+                "</h4>" +
+                "</div>" +
+                "<div id='broadcast" + count + "' class='panel-collapse collapse'>" +
+                "<div class='panel-body'>" +
+                "<table class='table table-responsive'>" +
+                "<tbody>" +
+                "<tr>" +
+                "<th>" +
+                "<img style='max-width:120px;max-height:160px' src='" + img[0] + "' />" +
+                "<img style='max-width:120px;max-height:160px' src='" + img[1] + "' />" +
+                "<img style='max-width:120px;max-height:160px' src='" + img[2] + "' />" +
+                "</th>" +
+                "</tr><tr>" +
+                "<th>x : " + x + "<br />" +
+                "y : " + y + "<br />" +
+                "z : " + z + "<br />" +
+                "攤位編號 : " + vendorId + "<br />" +
+                "名稱 : " + title + "<br />" +
+                "簡介 : <textarea  rows='4' cols='25' disabled autofocus>" + info + "</textarea><br />" +
+                "活動網址 : " + url + "<br />" +
+                "FB : " + fb_url + "<br />" +
+                "Twitter : " + twitter_url + "" +
+                "</th>" +
+                "<tr>" +
+                "</tbody>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "</div>"
+            )
+            delListener();
+        }
+    </script>
+</head>
+<body class="animsition">
+    <div class="container">
+        <ul class="pager">
+            <li class="previous"><a href="index.html">Previous</a></li>
+        </ul>
+        <div class="jumbotron text-center">
+            <h1>修改你的推播通知</h1>
+        </div>
+        <table class="table table-responsive">
+            <tbody>
+                <tr>
+                    <td>
+                        <span style="color:red;">*</span>x : <input id="x" type="number" placeholder="單位 : 公尺" autofocus /><br />
+                        <span style="color:red;">*</span>y : <input id="y" type="number" placeholder="單位 : 公尺" autofocus /><br />
+                        <span style="color:red;">*</span>z : <input id="z" type="number" placeholder="單位 : 公尺" autofocus /><br />
+                        *攤位編號 : <input id="vendorId" type="text" placeholder="1A" autofocus /><br />
+                        *名稱 : <input id="title" type="text" placeholder="世貿一館" autofocus /><br />
+                        *簡介 : <textarea id="info" rows="4" cols="25" autofocus></textarea><br />
+                        活動網址 : <input id="url" type="text" placeholder="**務必加上 https:// **" autofocus /><br />
+                        FB : <input id="fb_url" type="text" placeholder="**務必加上 https:// **" autofocus /><br />
+                        Twitter : <input id="twitter_url" type="text" placeholder="**務必加上 https:// **" autofocus />
+                        <form id="imgForm">
+                            <input id="file" name="file[]" type="file" multiple />
+                            <img style="max-width:300px;max-height:400px" id="largeImage1" src="" />
+                            <img style="max-width:300px;max-height:400px" id="largeImage2" src="" />
+                            <img style="max-width:300px;max-height:400px" id="largeImage3" src="" />
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-default btn-sm" id="add">
+            <i class="glyphicon glyphicon-plus"></i> 新增
+        </button>
+        <br /><br />
+        <div class="panel-group" id="broadcastList">
+        </div>
+        <div>
+            <span id="question" class="glyphicon glyphicon-question-sign" style="margin-top:30px;float:left"></span>
+            <div id="hint" style="width:50%;padding:10px;background-color:snow;opacity:0.5;display:none;float:left">
+                這裡可以設定推播，xyz為相對於展場的長寬高之座標值。
+            </div>
+            <button type="button" id="next" class="btn btn-success" style="float:right">下一頁</button>
+        </div>
+    </div>
+</body>
+</html>

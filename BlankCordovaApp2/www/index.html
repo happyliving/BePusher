@@ -1,0 +1,343 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/freelancer.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/w3.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
+
+
+
+    <script src="scripts/jquery-2.2.4.min.js"></script>
+    <script src="scripts/toastr.min.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui.js"></script>
+    <script type="text/javascript" src="scripts/subscribedBeacon.js"></script>
+    <script type="text/javascript" src="scripts/pushInfo.js"></script>
+
+
+    <title>Beacon</title>
+</head>
+
+<body id="page-top" class="index">
+    <div id="initial" class="app">
+        <h1>Apache Cordova</h1>
+        <div id="deviceready" class="blink">
+            <p class="event listening">正在連接到裝置</p>
+            <p class="event received">裝置已就緒</p>
+        </div>
+    </div>
+
+    <div id="loaded" style="display:none;">
+        <!-- Navigation -->
+        <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                    </button>
+                    <a id="beaconBtn" class="navbar-brand" href="#page-top">Beacon</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form id="searchExhibition" class="navbar-form" role="search">
+                        <div class="input-group">
+                            <input name="exhibition_name" type="text" class="form-control" placeholder="Search">
+                            <span class="input-group-btn">
+                                <button type="reset" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-remove">
+                                        <span class="sr-only">Close</span>
+                                    </span>
+                                </button>
+                                <button type="button" id="searchBtn" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-search">
+                                        <span class="sr-only">Search</span>
+                                    </span>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="hidden">
+                            <a href="#page-top"></a>
+                        </li>
+                        <li class="page-scroll">
+                            <a id="discoveredBtn" href="#discovered">發現展場</a>
+                        </li>
+                        <li class="page-scroll">
+                            <a id="recordBtn" href="#record">我的展場</a>
+                        </li>
+                        <li class="page-scroll">
+                            <a id="addBtn">新增展場</a>
+                        </li>
+                       
+                        <li id="HM-10-1">WW</li>
+                        <li id="HM-10-2">WW</li>
+                        <li id="HM-10-3">WW</li>
+                        <li id="HM-10-4">WW</li>
+                        <li id="HM-10-5">WW</li>
+                      
+
+                        <li class="page-scroll">
+                            <a id="signinBtn" href="#signinandlogin" data-toggle="modal" data-target="#signModal">
+                                <i class="glyphicon glyphicon-log-in"></i>&nbsp;註冊/登入
+                            </a>
+                        </li>
+                        <li class="page-scroll">
+                            <a style="display:none" id="logoutBtn" href="#signout"><i class="glyphicon glyphicon-log-out"></i>&nbsp;<span id="userName"></span>，登出</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+    </div>
+
+    <!-- 我的展區-->
+    <div id="recorded" class="container" style="display:none; padding: 70px 0;">
+        <div class="text-center">
+            <h2 style="font-size:3em">SUBSCRIBE</h2>
+            <h2 id="hasSub"></h2>
+        </div>
+        <div id="record" class="container discovered">
+        </div>
+        <div class="text-center">
+            <hr class="star-primary">
+            <h2 style="font-size:3em">MINE</h2>
+            <h2 id="hasMine"></h2>
+        </div>
+        <div id="my_exhibition" class="container discovered">
+        </div>
+    </div>
+
+    <!-- 發現展區-->
+    <div id="discovered" class="w3-row-padding w3-content" style="display:none; padding: 70px 0;">
+        <div class="text-center">
+            <h2 style="font-size:3em">Exhibition</h2>
+            <hr class="star-primary">
+        </div>
+        <div id="exhibition" class="container discovered">
+            
+        </div>
+    </div>
+
+    <!-- Notifcation Modal -->
+    <div id="notifModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Notification</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div id="notifList" class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+                               <!--
+                                   
+                                <ul class="event-list">
+                                    <li>
+                                        <time datetime="">
+                                            <button id="rmNotifBtn" type="button" class="close" style="color:white;">&times;</button>
+                                            <span class="vendor">4</span>
+                                        </time>
+
+                                       
+                                        <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin:0px;">
+                                            
+                                            <ol class="carousel-indicators">
+                                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                                <li data-target="#myCarousel" data-slide-to="1"></li>
+                                                <li data-target="#myCarousel" data-slide-to="2"></li>
+                                            </ol>
+
+                                          
+                                            <div class="carousel-inner">
+                                                <div class="item active">
+                                                    <a href="www.google.com" target="_blank">
+                                                        <img alt="Cabin House" src="images/cabin.png" />
+                                                    </a>
+                                                </div>
+
+                                                <div class="item">
+                                                    <a href="www.google.com" target="_blank">
+                                                        <img alt="Cabin House" src="images/cabin.png" />
+                                                    </a>
+                                                </div>
+
+                                                <div class="item">
+                                                    <a href="www.google.com" target="_blank">
+                                                        <img alt="Cabin House" src="images/cabin.png" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                           
+
+                                    
+                                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                                <span class="glyphicon glyphicon-chevron-left"></span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                                <span class="glyphicon glyphicon-chevron-right"></span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </div>
+
+                                        <div class="info">
+                                            <h2 class="title">Independence Day</h2>
+                                            <p class="desc">United States Holiday</p>
+                                            <ul>
+                                                <li style="width:50%;"><a href="http://www.google.com" target="_blank"><span class="fa fa-globe"></span> Website</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="social">
+                                            <ul>
+                                                <li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
+                                                <li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
+                                                <li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                                   
+                                   -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal for full size images on click-->
+    <div id="modalFull" class="w3-modal w3-black" style="padding-top:0">
+        <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+            <img id="imgFull" class="w3-image">
+            <p id="caption"></p>
+            <center>
+                <button id="signIn" type="button" class="btn btn-success"><i class="glyphicon glyphicon-ok"></i>SUBSRCRIBE</button>
+                <button id="signCancel" type="button" style="display:none;" class="btn btn-warning"><i class="glyphicon glyphicon-remove"></i>CANCEL</button>
+                <button id="back" type="button" style="margin-top:10px" class="btn btn-danger"><i class="glyphicon glyphicon-arrow-left"></i>BACK</button>
+            </center>
+        </div>
+    </div>
+
+    <!-- Modal for delete confirm-->
+    <div id="deleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Are you sure??</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12-xs text-center">
+                            <button id="yes" class="btn btn-success">Yes</button>
+                            <button class="btn btn-danger" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Signin and Login Modal-->
+    <div id="signModal" class="modal fade" role="form">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#login">Login</a></li>
+                    <li><a data-toggle="tab" href="#signup">Register</a></li>
+                </ul>
+                <div class="tab-content" style="padding-top:10px">
+                    <!-- login-->
+                    <div id="login" class="tab-pane fade in active">
+                        <form id="loginForm" class="form-horizontal">
+                            <!-- Sign In Form -->
+                            <!-- Text input-->
+                            <div class="control-group">
+                                <label class="control-label" for="userid">UserName :</label>
+                                <div class="controls">
+                                    <input name="userName" type="text" class="form-control" placeholder="Alverson" required>
+                                </div>
+                            </div>
+                            <!-- Password input-->
+                            <div class="control-group">
+                                <label class="control-label" for="password">Password :</label>
+                                <div class="controls">
+                                    <input name="password" class="form-control" type="password" placeholder="********" requiered>
+                                </div>
+                            </div>
+                            <!-- Button -->
+                            <div class="control-group">
+                                <label class="control-label" for="login"></label>
+                                <div class="controls">
+                                    <button id="loginBtn" type="button" class="btn btn-success">Login</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Sign up-->
+                    <div id="signup" class="tab-pane fade">
+                        <form id="signupForm" class="form-horizontal">
+                            <!-- Sign Up Form -->
+                            <!-- Text input-->
+                            <div class="control-group">
+                                <label class="control-label" for="userid">UserName :</label>
+                                <div class="controls">
+                                    <input name="userName" class="form-control" type="text" placeholder="Alverson" required>
+                                </div>
+                            </div>
+
+                            <!-- Password input-->
+                            <div class="control-group">
+                                <label class="control-label" for="password">Password :</label>
+                                <div class="controls">
+                                    <input name="password" class="form-control" type="password" placeholder="********" required>
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="control-group">
+                                <label class="control-label" for="signup"></label>
+                                <div class="controls">
+                                    <button id="signupBtn" type="button" class="btn btn-success">Sign up</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
